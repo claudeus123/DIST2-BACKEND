@@ -1,0 +1,55 @@
+package controllers
+
+import (
+	"github.com/gofiber/fiber/v2"
+	"github.com/claudeus123/DIST2-BACKEND/models"
+	"github.com/claudeus123/DIST2-BACKEND/database"
+	"fmt"
+	// "github.com/gofiber/fiber/v2/log"
+)
+
+
+func GetUsers(context *fiber.Ctx) error {
+	var users []models.User
+	if err := database.DB.Find(&users).Error; err != nil {
+        return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
+	return context.Status(200).JSON(fiber.Map{
+		"success": true,
+		"message": "Success",
+		"data":    users,
+	})
+}
+
+func GetUser(context *fiber.Ctx) error {
+	id := context.Params("id")
+	fmt.Println(id)
+	var user models.User
+	// Posible formatear mejor?
+	if err := database.DB.Select("id, first_name, last_name, email").Where("id = ?", id).First(&user).Error; err != nil {
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+	fmt.Println(user)
+	if user.ID == 0 {
+		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
+	}
+
+	return context.Status(200).JSON(fiber.Map{
+		"success": true,
+		"message": "Success",
+		"data":    user,
+	})
+}
+
+// func CreateUser (context *fiber.Ctx) error {
+// 	user := new(models.User)
+
+// 	if err := context.BodyParser(user); err != nil {
+// 		return context.Status(400).SendString(err.Error())
+// 	}
+
+// 	database.DB.Create(&user)
+// 	fmt.Println(user)
+// 	return context.SendStatus(201)
+// }
