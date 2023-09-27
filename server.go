@@ -12,7 +12,8 @@ import (
 func main() {
 
 	database.ConnectDb();
-	database.DB.AutoMigrate(&models.User{})
+	database.DB.AutoMigrate(&models.User{},&models.UserSession{})
+		// database.DB.Exec("ALTER TABLE user_sessions ALTER COLUMN user_id SET DATA TYPE integer")
 	// db.AutoMigrate(&User{}, &Product{}, &Order{})
 
     app := fiber.New(fiber.Config{

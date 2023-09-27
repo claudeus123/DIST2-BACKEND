@@ -47,22 +47,30 @@ func Login(context *fiber.Ctx) error {
 			})
 		}
 
+
+	userSession := models.UserSession{
+		UserId: user.ID,
+		Token: tokenString,
+		IsValid: true,
+	}
+	database.DB.Create(&userSession)
+	
 	context.Cookie(&fiber.Cookie{
 		Name:     "Authorization",
 		Value:    tokenString,
 		Expires:  time.Now().AddDate(100, 0, 0),
 	})
-	
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Logged in",
 		// "token":   tokenString,
 		"data":    user,
 	})
-
+	
 }
 
 func Register(context *fiber.Ctx) error {
+	// Revisar si existe en la DB el usuario
 	var body struct {
 		// FirstName string `json:"firstName"`
 		// LastName  string `json:"lastName"`
