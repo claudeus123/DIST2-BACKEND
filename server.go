@@ -7,6 +7,8 @@ import (
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/models"
 	"github.com/claudeus123/DIST2-BACKEND/routes"
+	// "github.com/claudeus123/DIST2-BACKEND/controllers"
+	"github.com/claudeus123/DIST2-BACKEND/middlewares"
 )
 
 func main() {
@@ -19,14 +21,15 @@ func main() {
     app := fiber.New(fiber.Config{
 		AppName: "Backend Distribuidas II",	
 	})
-
     app.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, World 👋!")
+		return c.SendString("Hello, World 👋!")
     })
-
-	routes.UsersRoutes(app)
+	
 	routes.AuthRoutes(app)
-
+	
+	app.Use(middlewares.Validate)
+	routes.UsersRoutes(app)
+	// app.Get("/session", controllers.GetSession)
 	// app.Get("/users", routes.GetUsers)
 	// app.Get("/users/:id", routes.GetUser)
 	// app.Post("/users", routes.CreateUser)
