@@ -12,7 +12,7 @@ import (
 
 func UsersRoutes(app *fiber.App)  {
 	middleware := app.Group("/u")
-
+	// middleware.Use(?)
 	middleware.Get("/users", controllers.GetUsers)
 	middleware.Get("/users/:id", controllers.GetUser)
 	// app.Post("/users", CreateUser)

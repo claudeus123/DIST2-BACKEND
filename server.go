@@ -24,7 +24,7 @@ func main() {
     app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
     })
-	
+	routes.GoogleRoutes(app)
 	routes.AuthRoutes(app)
 	
 	app.Use(middlewares.Validate)
