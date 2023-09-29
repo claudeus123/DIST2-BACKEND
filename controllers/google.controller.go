@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/claudeus123/DIST2-BACKEND/config"
+	"github.com/claudeus123/DIST2-BACKEND/interfaces"
 	"golang.org/x/oauth2"
 	// "io/ioutil"
 	"encoding/json"
@@ -29,16 +30,16 @@ func GoogleLogin(context *fiber.Ctx)  error{
 	// })
 }
 
-type googleAuthResponse struct {
-	ID            string `json:"id"`
-	Email         string `json:"email"`
-	VerifiedEmail bool   `json:"verified_email"`
-	Name          string `json:"name"`
-	GivenName     string `json:"given_name"`
-	FamilyName    string `json:"family_name"`
-	Picture       string `json:"picture"`
-	Locale        string `json:"locale"`
-}
+// type googleAuthResponse struct {
+// 	ID            string `json:"id"`
+// 	Email         string `json:"email"`
+// 	VerifiedEmail bool   `json:"verified_email"`
+// 	Name          string `json:"name"`
+// 	GivenName     string `json:"given_name"`
+// 	FamilyName    string `json:"family_name"`
+// 	Picture       string `json:"picture"`
+// 	Locale        string `json:"locale"`
+// }
 
 func GoogleCallback(context *fiber.Ctx) error {
 	code := context.Query("code")
@@ -48,10 +49,6 @@ func GoogleCallback(context *fiber.Ctx) error {
 	if err != nil {
 	  return context.SendStatus(fiber.StatusInternalServerError)
 	}
-	fmt.Println("Este es el token mi onichan")
-	// fmt.Println(token)
-	fmt.Println(token.AccessToken)
-
 
 	response, err := http.Get("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + token.AccessToken)
 	if err != nil {
@@ -60,12 +57,8 @@ func GoogleCallback(context *fiber.Ctx) error {
 
 	defer response.Body.Close()
 
-	// body, err := ioutil.ReadAll(response.Body)
-	// if err != nil {
-	// 	return err;
-	// }
 
-	googleResponse := googleAuthResponse{}
+	googleResponse := interfaces.GoogleAuthResponse{}
 	err = json.NewDecoder(response.Body).Decode(&googleResponse)
 	if err != nil {
 		fmt.Println(err)
@@ -75,16 +68,5 @@ func GoogleCallback(context *fiber.Ctx) error {
 
 	
 	return context.JSON(googleResponse)
-	// resp, httpErr := http.Get(fmt.Sprintf("https://www.googleapis.com/oauth2/v3/userinfo?access_token=%s", token.AccessToken))
-    // if httpErr != nil {
-    //     return httpErr
-    // }
-	// return context.SendString("Hello from google callback")
-	// code := context.Query("code")
-	// fmt.Println(code)
-    // return context.Status(200).JSON(fiber.Map{
-	// 	"success": true,
-	// 	"message": "Success",
-	// 	"data":    "Google Login",
-	// })
+	
 }
