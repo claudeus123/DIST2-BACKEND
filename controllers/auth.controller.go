@@ -153,3 +153,25 @@ func GoogleAuth(context *fiber.Ctx) error {
 		"data":    user,
 	})
 }
+
+func GoogleSignup(context *fiber.Ctx) error {
+	var body interfaces.GoogleAuthResponse
+	if context.BodyParser(&body) != nil {
+		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
+	}
+
+	var user models.User
+	database.DB.Where("email = ?", body.Email).First(&user)
+	if user.ID != 0 {
+		return context.Status(404).JSON(fiber.Map{"message": "User already exists"})
+	}
+
+	user = models.User{
+		Email: body.Email,
+		FirstName: body.GivenName,
+		LastName: body.FamilyName,
+		Password: "GOOGLE SIGNUP",
+	}
+	database.DB.Create(&user)
+	return context.Status(201).JSON(fiber.Map{"message": "User created"})
+}
