@@ -14,7 +14,7 @@ import (
 func main() {
 
 	database.ConnectDb();
-	database.DB.AutoMigrate(&models.User{},&models.UserSession{})
+	database.DB.AutoMigrate(&models.User{},&models.UserSession{}, &models.Image{})
 		// database.DB.Exec("ALTER TABLE user_sessions ALTER COLUMN user_id SET DATA TYPE integer")
 	// db.AutoMigrate(&User{}, &Product{}, &Order{})
 

@@ -37,10 +37,11 @@ func Login(context *fiber.Ctx) error {
 	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(100, 0, 0)),
-			Issuer:    user.Email,
+			Issuer:    fmt.Sprint(user.ID),
 		})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+
 		if err != nil {
 			return context.Status(401).JSON(fiber.Map{
 				"success": false,
@@ -123,7 +124,7 @@ func GoogleAuth(context *fiber.Ctx) error {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(100, 0, 0)),
-		Issuer:    user.Email,
+		Issuer:    fmt.Sprint(user.ID),
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))

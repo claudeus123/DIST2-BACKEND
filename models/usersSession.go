@@ -8,5 +8,5 @@ type UserSession struct {
 	gorm.Model
 	UserId		uint		`json:"user_id"`
 	IsValid 	bool		`json:"is_valid"`
-	Token 		string		`json:"token"`
+	Token 		string		`gorm:"index" json:"token"`
 }
