@@ -24,11 +24,13 @@ func main() {
     app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
     })
+	routes.ImageRoutes(app)
 	routes.GoogleRoutes(app)
 	routes.AuthRoutes(app)
 	
 	app.Use(middlewares.Validate)
 	routes.UsersRoutes(app)
+	
 	// app.Get("/session", controllers.GetSession)
 	// app.Get("/users", routes.GetUsers)
 	// app.Get("/users/:id", routes.GetUser)
