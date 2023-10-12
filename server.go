@@ -22,8 +22,8 @@ type UserTest struct {
 func main() {
 
 	database.ConnectDb();
-	database.DB.AutoMigrate(&models.User{},&models.UserSession{}, &models.Image{})
-		// database.DB.Exec("ALTER TABLE user_sessions ALTER COLUMN user_id SET DATA TYPE integer")
+	database.DB.AutoMigrate(&models.User{},&models.UserSession{}, &models.Image{}, &models.UserLike{}, &models.UserMatch{}, &models.Chat{},&models.Message{})
+	
 	// db.AutoMigrate(&User{}, &Product{}, &Order{})
 
     app := fiber.New(fiber.Config{
@@ -67,7 +67,8 @@ func main() {
 	routes.ImageRoutes(app)
 	routes.GoogleRoutes(app)
 	routes.AuthRoutes(app)
-	
+	routes.InteractionRoutes(app)
+
 	app.Use(middlewares.Validate)
 	routes.UsersRoutes(app)
 	
