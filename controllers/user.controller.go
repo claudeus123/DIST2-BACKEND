@@ -30,7 +30,7 @@ func GetUser(context *fiber.Ctx) error {
 	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
 		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
-
+	// VER TEMA DE SELECT * FROM USERS MATCH_ID1 = ID OR MATCH_ID2 = ID ALGO ASI
 	if err := database.DB.Preload("UserSessions").Preload("UserLikes").Preload("UserMatches").First(&user).Error; err != nil {
 		// Manejar el error, por ejemplo, devolver un error al cliente o registrar el error.
 		fmt.Println("Error al cargar el usuario:", err)

@@ -29,6 +29,14 @@ func main() {
     app := fiber.New(fiber.Config{
 		AppName: "Backend Distribuidas II",	
 	})
+	app.Use(func(c *fiber.Ctx) error {
+		// Permite solicitudes desde cualquier origen con los métodos HTTP especificados
+		c.Set("Access-Control-Allow-Origin", "*")
+		c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		// Continúa con el manejo de la solicitud
+		return c.Next()
+	})
     app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
     })
