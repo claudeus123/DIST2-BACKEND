@@ -41,6 +41,12 @@ func GetUser(context *fiber.Ctx) error {
 		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
 	}
 
+	var matches []models.UserMatch
+    if err := database.DB.Where("user_id = ? OR match_user_id = ?", user.ID, user.ID).Find(&matches).Error; err != nil {
+        fmt.Println("Error al obtener los matches:", err)
+        return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
 	data := interfaces.UserData{
 		Id: user.ID,
 		Email: user.Email,
@@ -48,7 +54,7 @@ func GetUser(context *fiber.Ctx) error {
 		LastName: user.LastName,
 		UserSessions: user.UserSessions,
 		UserLikes: user.UserLikes,
-		UserMatches: user.UserMatches,
+		UserMatches: matches,
 
 	}
 	fmt.Println(data)
