@@ -10,6 +10,7 @@ import (
 	"github.com/claudeus123/DIST2-BACKEND/routes"
 	// "github.com/claudeus123/DIST2-BACKEND/controllers"
 	"github.com/claudeus123/DIST2-BACKEND/middlewares"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 
@@ -29,14 +30,21 @@ func main() {
     app := fiber.New(fiber.Config{
 		AppName: "Backend Distribuidas II",	
 	})
-	app.Use(func(c *fiber.Ctx) error {
-		// Permite solicitudes desde cualquier origen con los métodos HTTP especificados
-		c.Set("Access-Control-Allow-Origin", "*")
-		c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-		c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-		// Continúa con el manejo de la solicitud
-		return c.Next()
-	})
+	// app.Use(func(c *fiber.Ctx) error {
+	// 	// Permite solicitudes desde cualquier origen con los métodos HTTP especificados
+	// 	c.Set("Access-Control-Allow-Origin", "*")
+	// 	c.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+	// 	c.Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	// 	// Continúa con el manejo de la solicitud
+	// 	return c.Next()
+	// })
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders:  "Origin, Content-Type, Accept",
+		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH",
+	}))
+
     app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
     })
