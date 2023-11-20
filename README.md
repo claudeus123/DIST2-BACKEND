@@ -1,2 +1,2 @@
 # DIST2-BACKEND
-![pa los k](mion.gif)
+Desarrollo de aplicaciones distribuidas II - Backend
