@@ -6,6 +6,7 @@ import (
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"fmt"
 	"github.com/claudeus123/DIST2-BACKEND/interfaces"
+	"github.com/claudeus123/DIST2-BACKEND/utils"
 	// "github.com/gofiber/fiber/v2/log"
 )
 
@@ -87,6 +88,25 @@ func UserData (id uint) (interfaces.UserData, error) {
 	}
 	return data, nil
 }
+
+func GetUserDataByToken(context *fiber.Ctx) error {
+	id, err := utils.GetIDFromToken(context)
+	if err != nil {
+		return err
+	}
+
+	data, err := UserData(uint(id))
+	if err != nil {
+		return err
+	}
+
+	return context.Status(200).JSON(fiber.Map{
+		"success": true,
+		"message": "Success",
+		"data":    data,
+	})
+}
+
 
 // func CreateUser (context *fiber.Ctx) error {
 // 	user := new(models.User)

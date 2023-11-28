@@ -65,7 +65,7 @@ func Login(context *fiber.Ctx) error {
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Logged in",
-		// "token":   tokenString,
+		"token":   tokenString,
 		"data":    user,
 	})
 	
@@ -150,7 +150,7 @@ func GoogleAuth(context *fiber.Ctx) error {
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Logged in",
-		// "token":   tokenString,
+		"token":   tokenString,
 		"data":    user,
 	})
 }
