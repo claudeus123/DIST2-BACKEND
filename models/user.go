@@ -11,6 +11,7 @@ type User struct {
     // CreatedAt 	time.Time      `json:"created_at"`
 	FirstName 	 string			`json:"first_name"`
 	LastName 	 string			`json:"last_name"`
+	Username	 string			`gorm:"unique" json:"username"`
 	Email 		 string			`gorm:"unique" json:"email"`
 	Password 	 string			`json:"password"`
 	UserSessions []UserSession  `json:"user_sessions"`

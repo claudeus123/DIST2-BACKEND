@@ -83,6 +83,13 @@ func MakeMatch(context *fiber.Ctx) error {
 		match.MatchUserID = uint(body.UserId)
 
 		database.DB.Create(&match)
+
+		// CREAR CHAT
+		var chat models.Chat
+		chat.User1ID = uint(id)
+		chat.User2ID = uint(body.UserId)
+		database.DB.Create(&chat)
+
 		return context.JSON(fiber.Map{"match": "true"})
 	} else {
 		return context.Status(200).JSON(fiber.Map{"match": "false"})

@@ -1,4 +1,5 @@
 package database
+
 import(
 	"gorm.io/driver/postgres"
 	"github.com/joho/godotenv"

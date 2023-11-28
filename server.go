@@ -5,11 +5,13 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 	"fmt"
 	"os"
+
+	// "github.com/claudeus123/DIST2-BACKEND/ws"
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/models"
 	"github.com/claudeus123/DIST2-BACKEND/routes"
 	// "github.com/claudeus123/DIST2-BACKEND/controllers"
-	"github.com/claudeus123/DIST2-BACKEND/middlewares"
+	// "github.com/claudeus123/DIST2-BACKEND/middlewares"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
@@ -26,7 +28,9 @@ func main() {
 	database.DB.AutoMigrate(&models.User{},&models.UserSession{}, &models.Image{}, &models.UserLike{}, &models.UserMatch{}, &models.Chat{},&models.Message{})
 	
 	// db.AutoMigrate(&User{}, &Product{}, &Order{})
-
+	// chat := fiber.New(fiber.Config{
+	// 	AppName: "CHAT Distribuidas II",	
+	// })
     app := fiber.New(fiber.Config{
 		AppName: "Backend Distribuidas II",	
 	})
@@ -85,10 +89,9 @@ func main() {
 	routes.AuthRoutes(app)
 	routes.InteractionRoutes(app)
 
-	app.Use(middlewares.Validate)
+	// app.Use(middlewares.Validate)
 	routes.UsersRoutes(app)
 	
-
 
 	// app.Get("/session", controllers.GetSession)
 	// app.Get("/users", routes.GetUsers)
@@ -99,5 +102,6 @@ func main() {
 
 	log.Info("Hello world")
 	fmt.Println("Hello world")
-    app.Listen(":3000")
+    app.Listen(":3333")
+	// chat.Listen(":8080")
 }
