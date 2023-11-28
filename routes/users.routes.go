@@ -15,6 +15,7 @@ func UsersRoutes(app *fiber.App)  {
 	// middleware.Use(?)
 	middleware.Get("/users", controllers.GetUsers)
 	middleware.Get("/users/:id", controllers.GetUser)
+	middleware.Get("/profile", controllers.GetUserDataByToken)
 	// app.Post("/users", CreateUser)
 	// app.Delete("/users/:id", DeleteUser)
 }
