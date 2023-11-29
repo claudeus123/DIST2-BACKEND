@@ -176,3 +176,16 @@ func GoogleSignup(context *fiber.Ctx) error {
 	database.DB.Create(&user)
 	return context.Status(201).JSON(fiber.Map{"message": "User created"})
 }
+
+func Logout(context *fiber.Ctx) error {
+	cookie := context.Cookies("Authorization")
+	fmt.Println(cookie)
+	var userSession models.UserSession
+	database.DB.Where("token = ?", cookie).First(&userSession)
+	if userSession.ID == 0 {
+		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
+	}
+	userSession.IsValid = false
+	database.DB.Save(&userSession)
+	return context.Status(200).JSON(fiber.Map{"message": "Logged out"})
+}

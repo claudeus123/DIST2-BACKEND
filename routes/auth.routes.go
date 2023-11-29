@@ -15,6 +15,8 @@ func AuthRoutes(app *fiber.App)  {
 	app.Post("/login", controllers.Login)
 	app.Post("/google/login", controllers.GoogleAuth)
 	app.Post("/google/register", controllers.GoogleSignup)
+
+	app.Get("/logout", controllers.Logout)
 	// app.Post("/users", CreateUser)
 	// app.Delete("/users/:id", DeleteUser)
 }
