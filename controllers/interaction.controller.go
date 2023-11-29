@@ -5,7 +5,13 @@ import (
 	"github.com/claudeus123/DIST2-BACKEND/utils"
 	"github.com/claudeus123/DIST2-BACKEND/models"
 	"github.com/claudeus123/DIST2-BACKEND/database"
+
 	
+	"bytes"
+    "encoding/json"
+    "fmt"
+    "log"
+    "net/http"
 )
 
 func LikeUser(context *fiber.Ctx) error {
@@ -89,6 +95,34 @@ func MakeMatch(context *fiber.Ctx) error {
 		chat.User1ID = uint(id)
 		chat.User2ID = uint(body.UserId)
 		database.DB.Create(&chat)
+
+		//Crear CHAT EN WEBSOCKET
+		var chatBody struct {
+			ChatId uint `json:"chat_id"`
+			User1Id uint `json:"user1_id"`
+			User2Id uint `json:"user2_id"`
+		}
+		chatBody.ChatId = chat.ID
+		chatBody.User1Id = uint(id)
+		chatBody.User2Id = uint(body.UserId)
+
+		values := chatBody
+		jsonData, err := json.Marshal(values)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		resp, err := http.Post("http://localhost:8080/ws/createChat", "application/json",
+			bytes.NewBuffer(jsonData))
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		defer resp.Body.Close()
+		var res map[string]interface{}
+		json.NewDecoder(resp.Body).Decode(&res)
+		fmt.Println(res["json"])
 
 		return context.JSON(fiber.Map{"match": "true"})
 	} else {
