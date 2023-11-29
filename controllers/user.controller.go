@@ -107,6 +107,43 @@ func GetUserDataByToken(context *fiber.Ctx) error {
 	})
 }
 
+func EditProfile (context *fiber.Ctx) error {
+	id, err := utils.GetIDFromToken(context)
+	if err != nil {
+		return err
+	}
+
+	var user models.User
+	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+
+	var body struct {
+		Username string `json:"username"`
+		FirstName string `json:"first_name"`
+		LastName string `json:"last_name"`
+		Email string `json:"email"`
+	}
+	if err := context.BodyParser(&body); err != nil {
+		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
+	}
+
+	user.Username = body.Username
+	user.FirstName = body.FirstName
+	user.LastName = body.LastName
+	user.Email = body.Email
+	database.DB.Save(&user)
+
+	// fmt.Println(user.FirstName)
+	// fmt.Println(body.FirstName)
+
+	return context.Status(200).JSON(fiber.Map{
+		"success": true,
+		"message": "Success",
+		"data":    user,
+	})
+}
+
 
 // func CreateUser (context *fiber.Ctx) error {
 // 	user := new(models.User)
