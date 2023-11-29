@@ -20,6 +20,11 @@ type User struct {
 	UserMatches	 []UserMatch	`json:"user_matches"`
 	LastLocationX float64		`json:"last_location_x"`
 	LastLocationY float64		`json:"last_location_y"`
+	Gender 		string			`json:"gender"`
+	Age 		int				`json:"age"`
+	Bio 		string			`json:"bio"`
+	Prefers 	string			`json:"prefers"`
+
 }
 
 // type User struct {

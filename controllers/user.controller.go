@@ -123,6 +123,10 @@ func EditProfile (context *fiber.Ctx) error {
 		FirstName string `json:"first_name"`
 		LastName string `json:"last_name"`
 		Email string `json:"email"`
+		Gender 		string			`json:"gender"`
+		Age 		int				`json:"age"`
+		Bio 		string			`json:"bio"`
+		Prefers 	string			`json:"prefers"`
 	}
 	if err := context.BodyParser(&body); err != nil {
 		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
@@ -132,6 +136,10 @@ func EditProfile (context *fiber.Ctx) error {
 	user.FirstName = body.FirstName
 	user.LastName = body.LastName
 	user.Email = body.Email
+	user.Gender = body.Gender
+	user.Age = body.Age
+	user.Bio = body.Bio
+	user.Prefers = body.Prefers
 	database.DB.Save(&user)
 
 	// fmt.Println(user.FirstName)
