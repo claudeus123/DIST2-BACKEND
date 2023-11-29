@@ -6,11 +6,14 @@ import (
 	"github.com/claudeus123/DIST2-BACKEND/models"
 	"github.com/claudeus123/DIST2-BACKEND/database"
 
-	
+	"github.com/joho/godotenv"
+	"log"
+	"fmt"
+	"os"
 	"bytes"
     "encoding/json"
-    "fmt"
-    "log"
+    // "fmt"
+    // "log"
     "net/http"
 )
 
@@ -74,6 +77,13 @@ func MakeMatch(context *fiber.Ctx) error {
 		UserId uint `json:"user_id"`
 	}
 
+	// var err error
+	if err := godotenv.Load(); err != nil {
+        log.Fatalf("Error cargando variables de entorno: %v", err)
+    }
+
+	wsUrl := os.Getenv("WS_URL")
+	
 	if context.BodyParser(&body) != nil {
 		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
 	}
@@ -113,7 +123,8 @@ func MakeMatch(context *fiber.Ctx) error {
 			log.Fatal(err)
 		}
 
-		resp, err := http.Post("http://localhost:8080/ws/createChat", "application/json",
+		postRoute := wsUrl + "/ws/createChat"
+		resp, err := http.Post(postRoute, "application/json",
 			bytes.NewBuffer(jsonData))
 		if err != nil {
 			log.Fatal(err)
