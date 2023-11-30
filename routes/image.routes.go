@@ -12,6 +12,7 @@ import (
 
 func ImageRoutes(app *fiber.App)  {
 	app.Post("/upload", controllers.ImageUpload)
+	app.Get("/images/:userID/:imageID", controllers.ImageServe)
 	// app.Post("/users", CreateUser)
 	// app.Delete("/users/:id", DeleteUser)
 }
