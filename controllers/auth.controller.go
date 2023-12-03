@@ -1,29 +1,27 @@
 package controllers
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"golang.org/x/crypto/bcrypt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/claudeus123/DIST2-BACKEND/models"
+	"fmt"
+	"os"
+	"time"
+
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/interfaces"
-	"fmt"
-	"time"
-	"os"
+	"github.com/claudeus123/DIST2-BACKEND/models"
+	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Login(context *fiber.Ctx) error {
-	
 	var body struct {
-		// FirstName string `json:"firstName"`
-		// LastName  string `json:"lastName"`
-		Email     string `json:"email"`
-		Password  string `json:"password"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 	if context.BodyParser(&body) != nil {
 		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
 	}
-	
+
 	var user models.User
 	database.DB.Where("email = ?", body.Email).First(&user)
 	if user.ID == 0 {
@@ -34,41 +32,33 @@ func Login(context *fiber.Ctx) error {
 		return context.Status(401).JSON(fiber.Map{"message": "Incorrect password"})
 	}
 
-	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(100, 0, 0)),
-			Issuer:    fmt.Sprint(user.ID),
-		})
+		ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(100, 0, 0)),
+		Issuer:    fmt.Sprint(user.ID),
+	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-
-		if err != nil {
-			return context.Status(401).JSON(fiber.Map{
-				"success": false,
-				"message": "Token Expired or invalid",
-			})
-		}
-
+	if err != nil {
+		return context.Status(401).JSON(fiber.Map{
+			"success": false,
+			"message": "Token Expired or invalid",
+		})
+	}
 
 	userSession := models.UserSession{
-		UserId: user.ID,
-		Token: tokenString,
+		UserId:  user.ID,
+		Token:   tokenString,
 		IsValid: true,
 	}
 	database.DB.Create(&userSession)
-	
-	context.Cookie(&fiber.Cookie{
-		Name:     "Authorization",
-		Value:    tokenString,
-		Expires:  time.Now().AddDate(100, 0, 0),
-	})
+
+	context.Set("Authorization", tokenString) // Configura el token en el encabezado
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Logged in",
 		"token":   tokenString,
 		"data":    user,
 	})
-	
 }
 
 func Register(context *fiber.Ctx) error {
@@ -76,13 +66,13 @@ func Register(context *fiber.Ctx) error {
 	var body struct {
 		// FirstName string `json:"firstName"`
 		// LastName  string `json:"lastName"`
-		Email     string `json:"email"`
-		Password  string `json:"password"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 
 	var user models.User
 	if err := database.DB.Where("email = ?", body.Email).First(&user); err != nil {
-		
+
 	}
 	if user.Email != "" {
 		return context.Status(400).JSON(fiber.Map{"message": "User already exists"})
@@ -101,7 +91,7 @@ func Register(context *fiber.Ctx) error {
 	// fmt.Println(string(hash))
 
 	user = models.User{
-		Email: body.Email,
+		Email:    body.Email,
 		Password: string(hash),
 	}
 	fmt.Println(user)
@@ -128,24 +118,24 @@ func GoogleAuth(context *fiber.Ctx) error {
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-		if err != nil {
-			return context.Status(401).JSON(fiber.Map{
-				"success": false,
-				"message": "Token Expired or invalid",
-			})
-		}
+	if err != nil {
+		return context.Status(401).JSON(fiber.Map{
+			"success": false,
+			"message": "Token Expired or invalid",
+		})
+	}
 
 	userSession := models.UserSession{
-		UserId: user.ID,
-		Token: tokenString,
+		UserId:  user.ID,
+		Token:   tokenString,
 		IsValid: true,
 	}
 	database.DB.Create(&userSession)
 
 	context.Cookie(&fiber.Cookie{
-		Name:     "Authorization",
-		Value:    tokenString,
-		Expires:  time.Now().AddDate(100, 0, 0),
+		Name:    "Authorization",
+		Value:   tokenString,
+		Expires: time.Now().AddDate(100, 0, 0),
 	})
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
@@ -168,20 +158,20 @@ func GoogleSignup(context *fiber.Ctx) error {
 	}
 
 	user = models.User{
-		Email: body.Email,
+		Email:     body.Email,
 		FirstName: body.GivenName,
-		LastName: body.FamilyName,
-		Password: "GOOGLE SIGNUP",
+		LastName:  body.FamilyName,
+		Password:  "GOOGLE SIGNUP",
 	}
 	database.DB.Create(&user)
 	return context.Status(201).JSON(fiber.Map{"message": "User created"})
 }
 
 func Logout(context *fiber.Ctx) error {
-	cookie := context.Cookies("Authorization")
-	fmt.Println(cookie)
+	token := context.Get("Authorization")
+	fmt.Println(token)
 	var userSession models.UserSession
-	database.DB.Where("token = ?", cookie).First(&userSession)
+	database.DB.Where("token = ?", token).First(&userSession)
 	if userSession.ID == 0 {
 		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
 	}

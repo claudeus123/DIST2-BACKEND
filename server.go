@@ -1,20 +1,21 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"fmt"
 	"os"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 
 	// "github.com/claudeus123/DIST2-BACKEND/ws"
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/models"
 	"github.com/claudeus123/DIST2-BACKEND/routes"
+
 	// "github.com/claudeus123/DIST2-BACKEND/controllers"
 	// "github.com/claudeus123/DIST2-BACKEND/middlewares"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
-
 
 type UserTest struct {
 	ID    int    `json:"id"`
@@ -24,15 +25,15 @@ type UserTest struct {
 
 func main() {
 
-	database.ConnectDb();
-	database.DB.AutoMigrate(&models.User{},&models.UserSession{}, &models.Image{}, &models.UserLike{}, &models.UserMatch{}, &models.Chat{},&models.Message{})
-	
+	database.ConnectDb()
+	database.DB.AutoMigrate(&models.User{}, &models.UserSession{}, &models.Image{}, &models.UserLike{}, &models.UserMatch{}, &models.Chat{}, &models.Message{})
+
 	// db.AutoMigrate(&User{}, &Product{}, &Order{})
 	// chat := fiber.New(fiber.Config{
-	// 	AppName: "CHAT Distribuidas II",	
+	// 	AppName: "CHAT Distribuidas II",
 	// })
-    app := fiber.New(fiber.Config{
-		AppName: "Backend Distribuidas II",	
+	app := fiber.New(fiber.Config{
+		AppName: "Backend Distribuidas II",
 	})
 	// app.Use(func(c *fiber.Ctx) error {
 	// 	// Permite solicitudes desde cualquier origen con los métodos HTTP especificados
@@ -44,17 +45,17 @@ func main() {
 	// })
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowHeaders:  "Origin, Content-Type, Accept",
-		AllowMethods: "GET,POST,HEAD,PUT,DELETE,PATCH",
+		AllowOrigins:  "*",
+		AllowMethods:  "GET,POST,HEAD,PUT,DELETE,PATCH",
+		AllowHeaders:  "Origin, Content-Type, Accept, Authorization, Content-Type",
+		ExposeHeaders: "Authorization",
 	}))
 
-    app.Get("/", func(c *fiber.Ctx) error {
+	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
-    })
+	})
 	app.Get("/testing", func(c *fiber.Ctx) error {
 		// Obtener ID de los parámetros de la ruta
-		
 
 		// Obtener datos del usuario (puedes obtener estos datos de tu base de datos)
 		user := UserTest{
@@ -83,7 +84,7 @@ func main() {
 		return c.JSON(response)
 	})
 	app.Static("/static", "./uploads")
-	
+
 	routes.ImageRoutes(app)
 	routes.GoogleRoutes(app)
 	routes.AuthRoutes(app)
@@ -91,7 +92,6 @@ func main() {
 
 	// app.Use(middlewares.Validate)
 	routes.UsersRoutes(app)
-	
 
 	// app.Get("/session", controllers.GetSession)
 	// app.Get("/users", routes.GetUsers)
@@ -102,6 +102,6 @@ func main() {
 
 	log.Info("Hello world")
 	fmt.Println("Hello world")
-    app.Listen(":3333")
+	app.Listen(":3333")
 	// chat.Listen(":8080")
 }

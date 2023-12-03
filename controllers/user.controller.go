@@ -1,23 +1,22 @@
 package controllers
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/claudeus123/DIST2-BACKEND/models"
-	"github.com/claudeus123/DIST2-BACKEND/database"
 	"fmt"
+
+	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/interfaces"
+	"github.com/claudeus123/DIST2-BACKEND/models"
 	"github.com/claudeus123/DIST2-BACKEND/utils"
+	"github.com/gofiber/fiber/v2"
 	// "github.com/gofiber/fiber/v2/log"
 )
-
-
 
 func GetUsers(context *fiber.Ctx) error {
 	var users []models.User
 	if err := database.DB.Find(&users).Error; err != nil {
-        return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
-    }
-	
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Success",
@@ -26,6 +25,7 @@ func GetUsers(context *fiber.Ctx) error {
 }
 
 func GetUser(context *fiber.Ctx) error {
+	fmt.Println("Funcion get user")
 	id := context.Params("id")
 	var user models.User
 	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
@@ -39,27 +39,31 @@ func GetUser(context *fiber.Ctx) error {
 	}
 
 	if user.ID == 0 {
+		fmt.Println("usuario no encontrado?")
 		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
 	}
 
 	var matches []models.UserMatch
-    if err := database.DB.Where("user_id = ? OR match_user_id = ?", user.ID, user.ID).Find(&matches).Error; err != nil {
-        fmt.Println("Error al obtener los matches:", err)
-        return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
-    }
+	if err := database.DB.Where("user_id = ? OR match_user_id = ?", user.ID, user.ID).Find(&matches).Error; err != nil {
+		fmt.Println("Error al obtener los matches:", err)
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
 
 	data := interfaces.UserData{
-		Id: user.ID,
-		Email: user.Email,
-		FirstName: user.FirstName,
-		LastName: user.LastName,
-		UserSessions: user.UserSessions,
-		UserLikes: user.UserLikes,
-		UserMatches: matches,
+		Id:           user.ID,
 
+		FirstName:    user.FirstName,
+		LastName:     user.LastName,
+		UserSessions: user.UserSessions,
+		UserLikes:    user.UserLikes,
+		UserMatches:  matches,
+		Gender:       user.Gender,
+		Age:          user.Age,
+		Bio:          user.Bio,
+		Prefers:      user.Prefers,
 	}
-	fmt.Println(data)
-	fmt.Println(data.UserMatches)
+	//fmt.Println(data)
+	//fmt.Println(data.UserMatches)
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Success",
@@ -67,7 +71,7 @@ func GetUser(context *fiber.Ctx) error {
 	})
 }
 
-func UserData (id uint) (interfaces.UserData, error) {
+func UserData(id uint) (interfaces.UserData, error) {
 	var user models.User
 	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
 		return interfaces.UserData{}, err
@@ -79,12 +83,15 @@ func UserData (id uint) (interfaces.UserData, error) {
 
 	data := interfaces.UserData{
 		Id:           user.ID,
-		Email:        user.Email,
 		FirstName:    user.FirstName,
 		LastName:     user.LastName,
 		UserSessions: user.UserSessions,
 		UserLikes:    user.UserLikes,
 		UserMatches:  user.UserMatches,
+		Gender:       user.Gender,
+		Age:          user.Age,
+		Bio:          user.Bio,
+		Prefers:      user.Prefers,
 	}
 	return data, nil
 }
@@ -107,10 +114,23 @@ func GetUserDataByToken(context *fiber.Ctx) error {
 	})
 }
 
-func EditProfile (context *fiber.Ctx) error {
+func EditProfile(context *fiber.Ctx) error {
+	// Obtener el token del encabezado
+	token := context.Get("Authorization")
+	if token == "" {
+		// Manejar el caso en el que no se proporciona un token
+		return context.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Token not provided",
+		})
+	}
+
+	// Pasar el contexto con el token a la función GetIDFromToken
 	id, err := utils.GetIDFromToken(context)
 	if err != nil {
-		return err
+		// Manejar el error, por ejemplo, devolver un error al cliente o registrar el error.
+		return context.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
 	}
 
 	var user models.User
@@ -119,14 +139,13 @@ func EditProfile (context *fiber.Ctx) error {
 	}
 
 	var body struct {
-		Username string `json:"username"`
+		Username  string `json:"username"`
 		FirstName string `json:"first_name"`
-		LastName string `json:"last_name"`
-		Email string `json:"email"`
-		Gender 		string			`json:"gender"`
-		Age 		int				`json:"age"`
-		Bio 		string			`json:"bio"`
-		Prefers 	string			`json:"prefers"`
+		LastName  string `json:"last_name"`
+		Gender    string `json:"gender"`
+		Age       int    `json:"age"`
+		Bio       string `json:"bio"`
+		Prefers   string `json:"prefers"`
 	}
 	if err := context.BodyParser(&body); err != nil {
 		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
@@ -135,15 +154,11 @@ func EditProfile (context *fiber.Ctx) error {
 	user.Username = body.Username
 	user.FirstName = body.FirstName
 	user.LastName = body.LastName
-	user.Email = body.Email
 	user.Gender = body.Gender
 	user.Age = body.Age
 	user.Bio = body.Bio
 	user.Prefers = body.Prefers
 	database.DB.Save(&user)
-
-	// fmt.Println(user.FirstName)
-	// fmt.Println(body.FirstName)
 
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
