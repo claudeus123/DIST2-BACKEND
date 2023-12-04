@@ -15,7 +15,7 @@ type User struct {
 	Email 		 string			`gorm:"unique" json:"email"`
 	Password 	 string			`json:"password"`
 	UserSessions []UserSession  `json:"user_sessions"`
-	// UserChats  	 []Chat 		`gorm:"foreignKey:User1ID" json:"user_chats"`
+	UserChats  	 []Chat 			`gorm:"foreignKey:User1ID" json:"user_chats"`
 	UserLikes	 []UserLike		`json:"user_likes"`
 	UserMatches	 []UserMatch	`json:"user_matches"`
 	LastLocationX float64		`json:"last_location_x"`

@@ -8,7 +8,7 @@ type Chat struct {
 	gorm.Model
 	User1ID   uint      `json:"user1_id"`
 	User2ID   uint      `json:"user2_id"`
-	Messages  []Message `gorm:"foreignKey:ChatID" json:"messages"`
+	// Messages  []Message `gorm:"foreignKey:ChatID" json:"messages"`
 	// User1     User      `gorm:"foreignKey:User1ID" json:"user1"`
 	// User2     User      `gorm:"foreignKey:User2ID" json:"user2"`
 }

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/interfaces"
@@ -26,49 +27,22 @@ func GetUsers(context *fiber.Ctx) error {
 
 func GetUser(context *fiber.Ctx) error {
 	fmt.Println("Funcion get user")
-	id := context.Params("id")
-	var user models.User
-	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
-		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
-	}
-	// VER TEMA DE SELECT * FROM USERS MATCH_ID1 = ID OR MATCH_ID2 = ID ALGO ASI
-	if err := database.DB.Preload("UserSessions").Preload("UserLikes").Preload("UserMatches").First(&user).Error; err != nil {
-		// Manejar el error, por ejemplo, devolver un error al cliente o registrar el error.
-		fmt.Println("Error al cargar el usuario:", err)
-		return err
-	}
-
-	if user.ID == 0 {
-		fmt.Println("usuario no encontrado?")
-		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
-	}
-
-	var matches []models.UserMatch
-	if err := database.DB.Where("user_id = ? OR match_user_id = ?", user.ID, user.ID).Find(&matches).Error; err != nil {
-		fmt.Println("Error al obtener los matches:", err)
+	id, err := strconv.Atoi(context.Params("id"))
+	if err != nil {
 		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
 
-	data := interfaces.UserData{
-		Id:           user.ID,
-
-		FirstName:    user.FirstName,
-		LastName:     user.LastName,
-		UserSessions: user.UserSessions,
-		UserLikes:    user.UserLikes,
-		UserMatches:  matches,
-		Gender:       user.Gender,
-		Age:          user.Age,
-		Bio:          user.Bio,
-		Prefers:      user.Prefers,
+	data, err := UserData(uint(id))
+	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
-	//fmt.Println(data)
-	//fmt.Println(data.UserMatches)
+
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Success",
 		"data":    data,
 	})
+	
 }
 
 func UserData(id uint) (interfaces.UserData, error) {
@@ -77,7 +51,22 @@ func UserData(id uint) (interfaces.UserData, error) {
 		return interfaces.UserData{}, err
 	}
 
-	if err := database.DB.Preload("UserSessions").Preload("UserLikes").Preload("UserMatches").First(&user).Error; err != nil {
+	if user.ID == 0 {
+		fmt.Println("usuario no encontrado?")
+		return interfaces.UserData{}, nil
+	}
+
+	if err := database.DB.Preload("UserSessions").Preload("UserLikes").First(&user).Error; err != nil {
+		return interfaces.UserData{}, err
+	}
+
+	chats := []models.Chat{}
+	if err := database.DB.Where("user1_id = ? OR user2_id = ?", user.ID, user.ID).Find(&chats).Error; err != nil {
+		return interfaces.UserData{}, err
+	}
+
+	matches := []models.UserMatch{}
+	if err := database.DB.Where("user_id = ? OR match_user_id = ?", user.ID, user.ID).Find(&matches).Error; err != nil {
 		return interfaces.UserData{}, err
 	}
 
@@ -88,12 +77,14 @@ func UserData(id uint) (interfaces.UserData, error) {
 		LastName:     user.LastName,
 		UserSessions: user.UserSessions,
 		UserLikes:    user.UserLikes,
-		UserMatches:  user.UserMatches,
+		UserMatches:  matches,
 		Gender:       user.Gender,
 		Age:          user.Age,
 		Bio:          user.Bio,
 		Prefers:      user.Prefers,
 		ImageURL:     user.ImageURL,
+		UserChats:    chats,
+		Username:	  user.Username,
 	}
 	return data, nil
 }

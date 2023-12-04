@@ -12,7 +12,9 @@ type UserData struct {
 	UserSessions []models.UserSession `json:"user_sessions"`
 	UserLikes    []models.UserLike    `json:"user_likes"`
 	UserMatches  []models.UserMatch   `json:"user_matches"`
+	UserChats    []models.Chat        `json:"user_chats"`
 	Gender       string               `json:"gender"`
+	Username	 string				  `json:"username"`
 	Age          int                  `json:"age"`
 	Bio          string               `json:"bio"`
 	Prefers      string               `json:"prefers"`

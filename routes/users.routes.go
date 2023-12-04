@@ -15,7 +15,7 @@ func UsersRoutes(app *fiber.App)  {
 	user := app.Group("/users")
 
 	user.Get("/", middlewares.Validate, controllers.GetUsers)
-	user.Get("/users/:id", middlewares.Validate, controllers.GetUser)
+	user.Get("/get/:id", middlewares.Validate, controllers.GetUser)
 	user.Get("/profile", middlewares.Validate, controllers.GetUserDataByToken)
 	user.Patch("/editProfile", middlewares.Validate, controllers.EditProfile)
 
