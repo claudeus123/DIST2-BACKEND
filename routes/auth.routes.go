@@ -5,18 +5,20 @@ import (
 	// "github.com/claudeus123/DIST2-BACKEND/models"
 	// "github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/controllers"
+	"github.com/claudeus123/DIST2-BACKEND/middlewares"
 	// "fmt"
 	// "github.com/gofiber/fiber/v2/log"
 )
 
 
 func AuthRoutes(app *fiber.App)  {
-	app.Post("/register", controllers.Register)
-	app.Post("/login", controllers.Login)
-	app.Post("/google/login", controllers.GoogleAuth)
-	app.Post("/google/register", controllers.GoogleSignup)
+	auth := app.Group("/auth")
+	auth.Post("/register", controllers.Register)
+	auth.Post("/login", controllers.Login)
+	// auth.Post("/google/login", controllers.GoogleAuth)
+	// auth.Post("/google/register", controllers.GoogleSignup)
+	auth.Get("/logout", middlewares.Validate, controllers.Logout)
 
-	app.Get("/logout", controllers.Logout)
 	// app.Post("/users", CreateUser)
 	// app.Delete("/users/:id", DeleteUser)
 }

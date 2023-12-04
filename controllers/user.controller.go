@@ -83,6 +83,7 @@ func UserData(id uint) (interfaces.UserData, error) {
 
 	data := interfaces.UserData{
 		Id:           user.ID,
+		Email:		  user.Email,
 		FirstName:    user.FirstName,
 		LastName:     user.LastName,
 		UserSessions: user.UserSessions,
@@ -92,6 +93,7 @@ func UserData(id uint) (interfaces.UserData, error) {
 		Age:          user.Age,
 		Bio:          user.Bio,
 		Prefers:      user.Prefers,
+		ImageURL:     user.ImageURL,
 	}
 	return data, nil
 }
