@@ -1,4 +1,7 @@
 .env
+.env.dev
+.env.example
+.env.testing
 
 /tmp/*
 /uploads/*

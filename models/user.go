@@ -24,6 +24,7 @@ type User struct {
 	Age 		int				`json:"age"`
 	Bio 		string			`json:"bio"`
 	Prefers 	string			`json:"prefers"`
+	ImageURL 		string			`json:"image_url"`
 
 }
 
