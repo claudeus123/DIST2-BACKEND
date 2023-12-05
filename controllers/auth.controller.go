@@ -169,9 +169,9 @@ func GoogleSignup(context *fiber.Ctx) error {
 
 func Logout(context *fiber.Ctx) error {
 	token := context.Get("Authorization")
-	fmt.Println(token)
+	formatToken := token[7:]
 	var userSession models.UserSession
-	database.DB.Where("token = ?", token).First(&userSession)
+	database.DB.Where("token = ?", formatToken).First(&userSession)
 	if userSession.ID == 0 {
 		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
 	}

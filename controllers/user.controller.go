@@ -215,7 +215,35 @@ func Forgot (context *fiber.Ctx) error {
 }
 
 
+func ChangePassword(context *fiber.Ctx) error {
+	id, err := utils.GetIDFromToken(context)
+	if err != nil {
+		return err
+	}
+	var user models.User
+	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+	var body struct {
+		Password string `json:"password"`
+	}
+	if err := context.BodyParser(&body); err != nil {
+		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
+	}
+	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
+	}
+	user.Password = string(hash)
+	database.DB.Save(&user)
 
+	Logout(context)
+	return context.Status(200).JSON(fiber.Map{
+		"success": true,
+		"message": "Success",
+		"data":    user,
+	})
+}
 
 // func CreateUser (context *fiber.Ctx) error {
 // 	user := new(models.User)
