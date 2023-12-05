@@ -3,7 +3,6 @@ package utils
 import (
 	"errors"
 	"fmt"
-
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/models"
 	"github.com/gofiber/fiber/v2"
