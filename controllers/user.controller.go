@@ -201,7 +201,7 @@ func Forgot (context *fiber.Ctx) error {
 	e := email.NewEmail()
 		e.From = emailSenderName + " <" + emailSenderAddress + ">"
 		e.To = []string{body.Email}
-		e.Subject = "Awesome Subject"
+		e.Subject = "Recuperación de contraseña"
 		// e.Text = []byte("Text Body is, of course, supported!")
 		e.HTML = []byte("<p>La nueva contraseña es: <strong>" + password +"</strong></p>")
 		e.Send(smtpServerAddress, smtp.PlainAuth("", emailSenderAddress, emailSenderPassword, smtpAuthAddress))
