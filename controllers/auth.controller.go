@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/interfaces"
 	"github.com/claudeus123/DIST2-BACKEND/models"
@@ -94,6 +95,7 @@ func Register(context *fiber.Ctx) error {
 		Email:    body.Email,
 		Password: string(hash),
 	}
+	user.Username = uuid.New().String()
 	fmt.Println(user)
 	database.DB.Create(&user)
 	fmt.Println(user)
