@@ -9,6 +9,7 @@ import (
 func InteractionRoutes(app *fiber.App) {
 	interaction := app.Group("/interaction")
 
+	interaction.Get("/users", middlewares.Validate, controllers.GetPossibleInteractions)
 	interaction.Post("/like", middlewares.Validate, controllers.LikeUser)
 	interaction.Post("/match", middlewares.Validate, controllers.MakeMatch)
 }

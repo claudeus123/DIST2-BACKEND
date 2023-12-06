@@ -5,6 +5,7 @@ import (
 	"github.com/claudeus123/DIST2-BACKEND/utils"
 	"github.com/claudeus123/DIST2-BACKEND/models"
 	"github.com/claudeus123/DIST2-BACKEND/database"
+	"github.com/claudeus123/DIST2-BACKEND/interfaces"
 
 	"github.com/joho/godotenv"
 	"log"
@@ -149,4 +150,30 @@ func MakeMatch(context *fiber.Ctx) error {
 
 	// return context.JSON(fiber.Map{"status": 200, "message": "success", "data": match})
 
+}
+
+func GetPossibleInteractions (context *fiber.Ctx) error {
+	var users []models.User
+	if err := database.DB.Find(&users).Error; err != nil {
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
+
+	var possibleInteractions []interfaces.InteractionData
+	for _, user := range users {
+		userData := interfaces.InteractionData{
+			Id:           user.ID,
+			Email:        user.Email,
+			FirstName:    user.FirstName,
+			LastName:     user.LastName,
+			Gender:       user.Gender,
+			Username:     user.Username,
+			Age:          user.Age,
+			Bio:          user.Bio,
+			Prefers:      user.Prefers,
+			ImageURL:     user.ImageURL,
+		}
+		possibleInteractions = append(possibleInteractions, userData)
+	}
+
+	return context.Status(200).JSON(fiber.Map{"status": 200, "message": "success", "data": possibleInteractions})
 }

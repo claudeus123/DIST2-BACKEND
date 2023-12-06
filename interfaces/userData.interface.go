@@ -20,3 +20,16 @@ type UserData struct {
 	Prefers      string               `json:"prefers"`
 	ImageURL     string               `json:"image_url"`
 }
+
+type InteractionData struct {
+	Id           uint                 `json:"id"`
+	Email        string               `json:"email"`
+	FirstName    string               `json:"firstName"`
+	LastName     string               `json:"lastName"`
+	Gender       string               `json:"gender"`
+	Username	 string				  `json:"username"`
+	Age          int                  `json:"age"`
+	Bio          string               `json:"bio"`
+	Prefers      string               `json:"prefers"`
+	ImageURL     string               `json:"image_url"`
+}
