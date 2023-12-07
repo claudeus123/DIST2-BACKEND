@@ -17,6 +17,8 @@ func ImageRoutes(app *fiber.App)  {
 
 	image.Post("/upload", middlewares.Validate, controllers.ImageUpload)
 	image.Get("/profile", middlewares.Validate, controllers.ImageServe)
+
+	image.Post("/upload/base64", middlewares.Validate, controllers.ImageUploadBase64)
 	// app.Post("/users", CreateUser)
 	// app.Delete("/users/:id", DeleteUser)
 }
