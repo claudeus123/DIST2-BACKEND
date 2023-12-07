@@ -13,7 +13,7 @@ import (
 	"github.com/claudeus123/DIST2-BACKEND/routes"
 
 	// "github.com/claudeus123/DIST2-BACKEND/controllers"
-	// "github.com/claudeus123/DIST2-BACKEND/middlewares"
+	"github.com/claudeus123/DIST2-BACKEND/middlewares"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
@@ -54,6 +54,7 @@ func main() {
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
 	})
+	app.Use("/static", middlewares.Validate)
 	app.Static("/static", "./uploads")
 
 	routes.AuthRoutes(app)
