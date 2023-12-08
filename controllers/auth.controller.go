@@ -28,6 +28,10 @@ func Login(context *fiber.Ctx) error {
 	if user.ID == 0 {
 		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
 	}
+	userData, err  := UserData(user.ID)
+	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
 		return context.Status(401).JSON(fiber.Map{"message": "Incorrect password"})
@@ -58,7 +62,7 @@ func Login(context *fiber.Ctx) error {
 		"success": true,
 		"message": "Logged in",
 		"token":   tokenString,
-		"data":    user,
+		"data":    userData,
 	})
 }
 
