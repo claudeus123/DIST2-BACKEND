@@ -28,20 +28,16 @@ func Login(context *fiber.Ctx) error {
 	if user.ID == 0 {
 		return context.Status(404).JSON(fiber.Map{"message": "User not found"})
 	}
-	userData, err  := UserData(user.ID)
-	if err != nil {
-		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
-	}
-
+	
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
 		return context.Status(401).JSON(fiber.Map{"message": "Incorrect password"})
 	}
-
+	
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(100, 0, 0)),
 		Issuer:    fmt.Sprint(user.ID),
 	})
-
+	
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 	if err != nil {
 		return context.Status(401).JSON(fiber.Map{
@@ -49,7 +45,11 @@ func Login(context *fiber.Ctx) error {
 			"message": "Token Expired or invalid",
 		})
 	}
-
+	
+	userData, err  := UserData(user.ID)
+	if err != nil {
+		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
+	}
 	userSession := models.UserSession{
 		UserId:  user.ID,
 		Token:   tokenString,
