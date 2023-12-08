@@ -93,8 +93,8 @@ func UserData(id uint) (interfaces.UserData, error) {
 		ImageURL:     user.ImageURL,
 		UserChats:    chats,
 		Username:	  user.Username,
-		Latitude: user.Latitude,
-		Longitude: user.Longitude,
+		Latitude: 	  user.Latitude,
+		Longitude:    user.Longitude,
 	}
 	return data, nil
 }
@@ -262,8 +262,8 @@ func SetLocation(context *fiber.Ctx) error {
 		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
 	}
 
-	user, err := UserData(uint(userID))
-	if err != nil {
+	var user models.User
+	if err := database.DB.Where("id = ?", userID).First(&user).Error; err != nil {
 		return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
 	}
 
