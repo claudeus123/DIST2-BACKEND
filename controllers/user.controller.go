@@ -44,6 +44,7 @@ func GetUser(context *fiber.Ctx) error {
 		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
 
+	fmt.Println(data)
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Success",

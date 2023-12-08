@@ -70,18 +70,16 @@ func Register(context *fiber.Ctx) error {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
+	if context.BodyParser(&body) != nil {
+		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
+	}
 
 	var user models.User
-	if err := database.DB.Where("email = ?", body.Email).First(&user); err != nil {
-
-	}
+	if err := database.DB.Where("email = ?", body.Email).First(&user); err != nil {}
 	if user.Email != "" {
 		return context.Status(400).JSON(fiber.Map{"message": "User already exists"})
 	}
 
-	if context.BodyParser(&body) != nil {
-		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
-	}
 
 	// Generar un hash de la contraseña para almacenarla de manera segura
 	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
