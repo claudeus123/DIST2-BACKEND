@@ -18,8 +18,8 @@ type User struct {
 	UserChats  	 []Chat 			`gorm:"foreignKey:User1ID" json:"user_chats"`
 	UserLikes	 []UserLike		`json:"user_likes"`
 	UserMatches	 []UserMatch	`json:"user_matches"`
-	LastLocationX float64		`json:"last_location_x"`
-	LastLocationY float64		`json:"last_location_y"`
+	Latitude float64		`json:"latitude"`
+	Longitude float64		`json:"longitude"`
 	Gender 		string			`json:"gender"`
 	Age 		int				`json:"age"`
 	Bio 		string			`json:"bio"`

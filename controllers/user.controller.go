@@ -93,6 +93,8 @@ func UserData(id uint) (interfaces.UserData, error) {
 		ImageURL:     user.ImageURL,
 		UserChats:    chats,
 		Username:	  user.Username,
+		Latitude: user.Latitude,
+		Longitude: user.Longitude,
 	}
 	return data, nil
 }
@@ -246,6 +248,31 @@ func ChangePassword(context *fiber.Ctx) error {
 	})
 }
 
+func SetLocation(context *fiber.Ctx) error {
+	userID, err := utils.GetIDFromToken(context)
+	if err != nil {
+		return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
+	}
+
+	var body struct {
+		Latitude float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+	}
+	if err := context.BodyParser(&body); err != nil {
+		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
+	}
+
+	user, err := UserData(uint(userID))
+	if err != nil {
+		return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
+	}
+
+	user.Latitude = body.Latitude
+	user.Longitude = body.Longitude
+	database.DB.Save(&user)
+
+	return context.Status(200).JSON(fiber.Map{"message": "Success", "data": user})
+}
 // func CreateUser (context *fiber.Ctx) error {
 // 	user := new(models.User)
 
