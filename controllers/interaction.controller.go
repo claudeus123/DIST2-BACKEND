@@ -171,6 +171,8 @@ func GetPossibleInteractions (context *fiber.Ctx) error {
 			Bio:          user.Bio,
 			Prefers:      user.Prefers,
 			ImageURL:     user.ImageURL,
+			Latitude: user.Latitude,
+			Longitude: user.Longitude,
 		}
 		possibleInteractions = append(possibleInteractions, userData)
 	}

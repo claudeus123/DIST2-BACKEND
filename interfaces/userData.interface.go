@@ -34,4 +34,6 @@ type InteractionData struct {
 	Bio          string               `json:"bio"`
 	Prefers      string               `json:"prefers"`
 	ImageURL     string               `json:"image_url"`
+	Latitude float64				`json:"latitude"`
+	Longitude float64				`json:"longitude"`
 }
