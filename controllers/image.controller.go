@@ -155,7 +155,7 @@ func ImageUploadBase64(context *fiber.Ctx) error {
 	fileFormat := fmt.Sprintf("%d.jpg", userID)
 
 	// Guardar la imagen en el backend (por ejemplo, en un archivo)
-	err = ioutil.WriteFile("uploads/" + fileFormat, imageData, 0644)
+	err = ioutil.WriteFile("../uploads/" + fileFormat, imageData, 0644)
 	if err != nil {
 		fmt.Println("Error al guardar la imagen:", err)
 		return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
