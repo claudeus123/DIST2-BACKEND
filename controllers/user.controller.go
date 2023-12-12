@@ -33,7 +33,7 @@ func GetUsers(context *fiber.Ctx) error {
 }
 
 func GetUser(context *fiber.Ctx) error {
-	fmt.Println("Funcion get user")
+	// fmt.Println("Funcion get user")
 	id, err := strconv.Atoi(context.Params("id"))
 	if err != nil {
 		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
@@ -44,7 +44,7 @@ func GetUser(context *fiber.Ctx) error {
 		return context.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
 
-	fmt.Println(data)
+	// fmt.Println(data)
 	return context.Status(200).JSON(fiber.Map{
 		"success": true,
 		"message": "Success",

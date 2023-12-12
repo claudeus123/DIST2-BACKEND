@@ -73,7 +73,6 @@ func main() {
 	// app.Static("/static/", "./") util (?)
 
 	log.Info("Hello world")
-	fmt.Println("Hello world")
 	app.Listen(":3333")
 	// chat.Listen(":8080")
 }

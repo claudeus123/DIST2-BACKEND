@@ -98,9 +98,9 @@ func Register(context *fiber.Ctx) error {
 		Password: string(hash),
 	}
 	user.Username = uuid.New().String()
-	fmt.Println(user)
+	// fmt.Println(user)
 	database.DB.Create(&user)
-	fmt.Println(user)
+	// fmt.Println(user)
 	return context.Status(201).JSON(fiber.Map{"message": "User created"})
 }
 

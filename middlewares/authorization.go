@@ -1,19 +1,19 @@
 package middlewares
 
 import (
-	"fmt"
+	// "fmt"
 
 	"github.com/claudeus123/DIST2-BACKEND/controllers"
 	"github.com/gofiber/fiber/v2"
 )
 
 func Validate(context *fiber.Ctx) error {
-	fmt.Println("Validate")
+	// fmt.Println("Validate")
 
 	// Obtén el token desde el encabezado en lugar de las cookies
 	authHeader := context.Get("Authorization")
 	if authHeader == "" {
-		fmt.Println("Validate")
+		// fmt.Println("Validate")
 		return context.Status(401).JSON(fiber.Map{
 			"status":  "error",
 			"message": "Unauthorized",
@@ -27,7 +27,7 @@ func Validate(context *fiber.Ctx) error {
 	token := authHeader[len("Bearer "):]
 
 	err := controllers.GetSessionWithToken(context, token)
-	fmt.Println(err)
+	// fmt.Println(err)
 	if err != nil {
 		return context.Status(401).JSON(fiber.Map{
 			"status":  "error",
