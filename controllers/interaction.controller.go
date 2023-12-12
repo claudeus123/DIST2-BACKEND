@@ -9,7 +9,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"log"
-	"fmt"
+	// "fmt"
 	"os"
 	"bytes"
     "encoding/json"
@@ -134,7 +134,7 @@ func MakeMatch(context *fiber.Ctx) error {
 		defer resp.Body.Close()
 		var res map[string]interface{}
 		json.NewDecoder(resp.Body).Decode(&res)
-		fmt.Println(res["json"])
+		// fmt.Println(res["json"])
 
 		return context.JSON(fiber.Map{"match": "true"})
 	} else {
