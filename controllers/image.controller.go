@@ -9,10 +9,10 @@ import (
 	// "os"
 	// "github.com/google/uuid"
 
-	"encoding/base64"
-	// "fmt"
-	"io/ioutil"
-	// "os"
+	// "encoding/base64"
+	// // "fmt"
+	// "io/ioutil"
+	// // "os"
 
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/models"
@@ -142,31 +142,31 @@ func ImageUploadBase64(context *fiber.Ctx) error {
 		return context.Status(400).JSON(fiber.Map{"message": "Bad request"})
 	}
 
-	imageData, err := base64.StdEncoding.DecodeString(body.Base64Image)
-	if err != nil {
-		fmt.Println("Error al decodificar la cadena Base64:", err)
-		return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
-	}
+	// imageData, err := base64.StdEncoding.DecodeString(body.Base64Image)
+	// if err != nil {
+	// 	fmt.Println("Error al decodificar la cadena Base64:", err)
+	// 	return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
+	// }
 
 	userID, err := utils.GetIDFromToken(context)
 	if err != nil {
 		return context.JSON(fiber.Map{"status": 500, "message": "Server error", "data": nil})
 	}
-	fileFormat := fmt.Sprintf("%d.jpg", userID)
+	// fileFormat := fmt.Sprintf("%d.jpg", userID)
 
 	// Guardar la imagen en el backend (por ejemplo, en un archivo)
-	err = ioutil.WriteFile("../uploads/" + fileFormat, imageData, 0644)
-	if err != nil {
-		fmt.Println("Error al guardar la imagen:", err)
-		return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
-	}
+	// err = ioutil.WriteFile("../uploads/" + fileFormat, imageData, 0644)
+	// if err != nil {
+	// 	fmt.Println("Error al guardar la imagen:", err)
+	// 	return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
+	// }
 
 	var user models.User
 	result := database.DB.Where("id = ?", userID).First(&user)
 	if result.Error != nil {
 		return context.JSON(fiber.Map{"status": 404, "message": "User not found", "data": nil})
 	}
-	user.ImageURL = fmt.Sprintf("/static/%d.jpg", userID)
+	user.ImageURL = body.Base64Image
 	database.DB.Save(&user)
 
 	return context.Status(201).JSON(fiber.Map{"message": "Image uploaded"})
