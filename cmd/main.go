@@ -55,7 +55,7 @@ func main() {
 		return c.SendString("Hello, World 👋!")
 	})
 	// app.Use("/static", middlewares.Validate)
-	app.Static("/static", "./uploads")
+	app.Static("/static", "../uploads")
 
 	routes.AuthRoutes(app)
 	routes.ImageRoutes(app)

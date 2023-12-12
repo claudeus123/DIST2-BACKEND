@@ -161,5 +161,13 @@ func ImageUploadBase64(context *fiber.Ctx) error {
 		return context.Status(500).JSON(fiber.Map{"message": "Internal server error"})
 	}
 
+	var user models.User
+	result := database.DB.Where("id = ?", userID).First(&user)
+	if result.Error != nil {
+		return context.JSON(fiber.Map{"status": 404, "message": "User not found", "data": nil})
+	}
+	user.ImageURL = fmt.Sprintf("/static/%d.jpg", userID)
+	database.DB.Save(&user)
+
 	return context.Status(201).JSON(fiber.Map{"message": "Image uploaded"})
 }
