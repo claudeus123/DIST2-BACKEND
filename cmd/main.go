@@ -6,7 +6,8 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
-
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	
 	// "github.com/claudeus123/DIST2-BACKEND/ws"
 	"github.com/claudeus123/DIST2-BACKEND/database"
 	"github.com/claudeus123/DIST2-BACKEND/models"
@@ -43,7 +44,9 @@ func main() {
 	// 	// Continúa con el manejo de la solicitud
 	// 	return c.Next()
 	// })
-
+	app.Use(logger.New(logger.Config{
+		Format: "[${ip}]:${port} ${status} - ${method} ${path}\n",
+	}))
 	app.Use(cors.New(cors.Config{
 		AllowOrigins:  "*",
 		AllowMethods:  "GET,POST,HEAD,PUT,DELETE,PATCH",
